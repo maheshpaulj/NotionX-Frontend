@@ -28,7 +28,7 @@ function Page({params: {noteId}}: {params: {noteId: string}}) {
   
   useEffect(() => {
     if (data?.title) {
-      document.title = data.title + " | NoteScape";
+      document.title = data.title + " | NotionX";
     }
   }, [data]);
 

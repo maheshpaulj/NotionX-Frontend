@@ -4,7 +4,7 @@ import { LucideIcon, NotebookPen, Users, Languages, Image, KeyRound, Cpu } from 
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NoteScape - Features",
+  title: "NotionX - Features",
 };
 
 interface FeatureSectionProps {

@@ -29,8 +29,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "NoteScape - AI-Powered Note-Taking Application",
-  description: "Transform your note-taking experience with NoteScape's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A. Built with Next.js and Meta's Llama model.",
+  title: "NotionX - AI-Powered Note-Taking Application",
+  description: "Transform your note-taking experience with NotionX's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A. Built with Next.js and Meta's Llama model.",
   keywords: "note-taking, AI, collaboration, Llama model, real-time, translation, Next.js",
   manifest: "/manifest.json",
     icons: {
@@ -50,24 +50,24 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "NoteScape - AI-Powered Note-Taking Application",
-    description: "Transform your note-taking experience with NoteScape's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A.",
+    title: "NotionX - AI-Powered Note-Taking Application",
+    description: "Transform your note-taking experience with NotionX's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A.",
     type: "website",
     locale: "en_US",
-    siteName: "NoteScape",
+    siteName: "NotionX",
     images: [
       {
         url: "/assets/ss.png", // You'll need to add your actual OG image
         width: 1200,
         height: 630,
-        alt: "NoteScape Preview"
+        alt: "NotionX Preview"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "NoteScape - AI-Powered Note-Taking Application",
-    description: "Transform your note-taking experience with NoteScape's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A.",
+    title: "NotionX - AI-Powered Note-Taking Application",
+    description: "Transform your note-taking experience with NotionX's AI-powered features including real-time collaboration, smart translation, and context-aware Q&A.",
     images: ["/assets/ss.png"], // You'll need to add your actual Twitter card image
   },
   robots: {
@@ -93,7 +93,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="notescape-theme">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="NotionX-theme">
           <ClerkProviderWrapper>
             <EdgeStoreProvider>
               <Toaster position="bottom-right" />

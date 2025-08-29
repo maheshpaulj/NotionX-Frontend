@@ -19,7 +19,7 @@ export const Logo = () => {
 
       />
       <p className={cn("font-semibold", font.className)}>
-        NoteScape
+        NotionX
       </p>
     </div>
   )

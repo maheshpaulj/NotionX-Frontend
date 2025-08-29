@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NoteScape - About",
+  title: "NotionX - About",
 };
 
 export default function AboutPage() {
@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center space-y-4 mb-16">
             <h1 className="text-5xl font-bold tracking-tight ">
-              About <span className="underline">NoteScape</span>
+              About <span className="underline">NotionX</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Reimagining note-taking with artificial intelligence and seamless collaboration

@@ -53,7 +53,7 @@ const Navbar = () => {
               className="object-contain"
               priority
             />
-            <span className="text-xl font-bold">NoteScape</span>
+            <span className="text-xl font-bold">NotionX</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -103,7 +103,7 @@ const Navbar = () => {
                 />
                 <Button size='sm' asChild>
                   <Link href='/home'>
-                    Enter NoteScape
+                    Enter NotionX
                   </Link>
                 </Button>
               </>

@@ -201,7 +201,7 @@ export function Sidebar() {
           />
         </div>
         <div className="absolute bottom-0 w-full text-center font-bold text-muted-foreground">
-          <p className="text-sm">NoteScape v2.5.2</p>
+          <p className="text-sm">NotionX v1.0.0</p>
         </div>
       </aside>
       <div

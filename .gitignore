@@ -1,38 +1,50 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Node modules
+node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+# Output directories
+.next/
+out/
+dist/
 
-# testing
-/coverage
+# Env files
+.env*
+!.env.example
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# local env files
-.env*.local
+# OS-specific
+.DS_Store
+Thumbs.db
 
-# vercel
-.vercel
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-# typescript
+# TypeScript
 *.tsbuildinfo
-next-env.d.ts
 
-/test
+# Firebase local emulators
+.firebase/
+firestore-debug.log
+firebase-debug.log
+
+# Clerk local cache (if used)
+.clerk/
+
+# Cloudflare Workers (wrangler)
+wrangler.toml
+.workers/
+.cloudflare/
+
+# EdgeStore (if it creates any local cache, adjust as needed)
+.edgestore/
+
+# Others (optional)
+*.log
+coverage/

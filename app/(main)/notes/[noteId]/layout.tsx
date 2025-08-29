@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'NoteScape - Note'
+  title: 'NotionX - Note'
 };
 
 async function NoteLayout({ children, params: { noteId } }: { children: React.ReactNode; params: { noteId: string } }) {

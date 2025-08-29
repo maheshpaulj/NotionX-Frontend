@@ -21,7 +21,7 @@ return (
               Apperance
             </Label>
             <span className="text-[0.8rem] text-muted-foreground">
-              Customize how NoteScape looks on your device
+              Customize how NotionX looks on your device
             </span>
           </div>
           <ThemeToggle/>
