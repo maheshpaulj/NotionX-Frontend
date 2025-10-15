@@ -3,7 +3,7 @@ name: Deploy Frontend to EKS
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 env:
   ECR_REPOSITORY: notionx-frontend
