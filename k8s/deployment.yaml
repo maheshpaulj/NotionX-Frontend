@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: 503698126220.dkr.ecr.us-east-1.amazonaws.com/notionx-frontend:manual-v1 # Placeholder
+        image: 503698126220.dkr.ecr.us-east-1.amazonaws.com/notionx-frontend:latest  # Placeholder
         ports:
         - containerPort: 3001
         env:
