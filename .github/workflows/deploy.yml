@@ -3,7 +3,7 @@ name: Deploy Frontend to EKS
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
 
 env:
   ECR_REPOSITORY: notionx-frontend
@@ -16,6 +16,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # --- NEW STEP: Create the .env file for the build process ---
+    - name: Create .env file
+      run: |
+        cat <<EOF > .env.local
+        # This file is dynamically created in CI/CD
+        LIVEBLOCKS_SECRET_KEY=${{ secrets.LIVEBLOCKS_SECRET_KEY }}
+        EDGE_STORE_ACCESS_KEY=${{ secrets.EDGE_STORE_ACCESS_KEY }}
+        EDGE_STORE_SECRET_KEY=${{ secrets.EDGE_STORE_SECRET_KEY }}
+        # Add any other required build-time secrets here
+        EOF
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -27,24 +38,21 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
+    # --- NO CHANGES TO THIS STEP ---
     - name: Build, Tag, and Push Docker Image
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build \
-          --build-arg LIVEBLOCKS_SECRET_KEY=${{ secrets.LIVEBLOCKS_SECRET_KEY }} \
-          --build-arg EDGE_STORE_ACCESS_KEY=${{ secrets.EDGE_STORE_ACCESS_KEY }} \
-          --build-arg EDGE_STORE_SECRET_KEY=${{ secrets.EDGE_STORE_SECRET_KEY }} \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # The docker build command is now simple again.
+        # It will automatically include the .env.local file from the previous step.
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Deploy to Amazon EKS
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
-        # Use sed to replace the placeholder image tag with the new one based on the commit SHA
         sed -i 's|image: .*|image: ${{ steps.build-image.outputs.image }}|' k8s/deployment.yaml
-        # Apply the updated manifests to the cluster
         kubectl apply -f k8s/
