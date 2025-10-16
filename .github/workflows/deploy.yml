@@ -13,6 +13,21 @@ jobs:
     name: Build, Push, and Deploy
     runs-on: ubuntu-latest
     steps:
+    - name: Validate Secrets
+      run: |
+        echo "LIVEBLOCKS_PRIVATE_KEY length: ${{ env.LIVEBLOCKS_SECRET_LENGTH }}"
+        echo "EDGE_STORE_ACCESS_KEY length: ${{ env.EDGE_ACCESS_KEY_LENGTH }}"
+        echo "EDGE_STORE_SECRET_KEY length: ${{ env.EDGE_SECRET_KEY_LENGTH }}"
+        echo "AWS_ACCESS_KEY_ID length: ${{ env.AWS_KEY_ID_LENGTH }}"
+        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
+        echo "FIREBASE_SERVICE_KEY length: ${{ env.FIREBASE_SERVICE_KEY }}"
+      env:
+        # We create temporary env vars to hold the length of each secret
+        LIVEBLOCKS_SECRET_LENGTH: ${{ join(secrets.LIVEBLOCKS_PRIVATE_KEY, 'x') && 1 }}
+        EDGE_ACCESS_KEY_LENGTH: ${{ join(secrets.EDGE_STORE_ACCESS_KEY, 'x') && 1 }}
+        EDGE_SECRET_KEY_LENGTH: ${{ join(secrets.EDGE_STORE_SECRET_KEY, 'x') && 1 }}
+        AWS_KEY_ID_LENGTH: ${{ join(secrets.AWS_ACCESS_KEY_ID, 'x') && 1 }}
+
     - name: Checkout Code
       uses: actions/checkout@v3
 
