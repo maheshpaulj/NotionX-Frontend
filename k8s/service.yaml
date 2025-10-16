@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
+  annotations:
+    # This tells the AWS load balancer which path to check for health
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /
 spec:
   selector:
     app: frontend
