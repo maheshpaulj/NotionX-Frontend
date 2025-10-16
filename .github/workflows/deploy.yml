@@ -1,9 +1,9 @@
-# .github/workflows/deploy.yml
+# /notionx-frontend/.github/workflows/deploy.yml
 name: Deploy Frontend to EKS
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master  "]
 
 env:
   ECR_REPOSITORY: notionx-frontend
@@ -16,15 +16,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # --- NEW STEP: Create the .env file for the build process ---
-    - name: Create .env file
+    - name: Create .env.local file for build
       run: |
         cat <<EOF > .env.local
-        # This file is dynamically created in CI/CD
-        LIVEBLOCKS_SECRET_KEY=${{ secrets.LIVEBLOCKS_SECRET_KEY }}
+        # This file is dynamically created in CI/CD for the build process
+        LIVEBLOCKS_PRIVATE_KEY=${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}
         EDGE_STORE_ACCESS_KEY=${{ secrets.EDGE_STORE_ACCESS_KEY }}
         EDGE_STORE_SECRET_KEY=${{ secrets.EDGE_STORE_SECRET_KEY }}
-        # Add any other required build-time secrets here
         EOF
 
     - name: Configure AWS Credentials
@@ -38,15 +36,12 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    # --- NO CHANGES TO THIS STEP ---
     - name: Build, Tag, and Push Docker Image
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # The docker build command is now simple again.
-        # It will automatically include the .env.local file from the previous step.
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -54,5 +49,5 @@ jobs:
     - name: Deploy to Amazon EKS
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
-        sed -i 's|image: .*|image: ${{ steps.build-image.outputs.image }}|' k8s/deployment.yaml
+        sed -i 's|image: .*|image: ${{ steps.build-image.outputs.image }}|' ks/deployment.yaml
         kubectl apply -f k8s/
