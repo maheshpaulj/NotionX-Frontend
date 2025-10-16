@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import {Dialog,DialogContent,DialogHeader} from '@/components/ui/dialog'
 import { useConverImage } from "@/hooks/useCoverImage"
 import { SingleImageDropzone } from "@/components/SingleImageDropzone"
-import { useEdgeStore } from "@/lib/edgestore"
+import { useEdgeStore } from "@/lib/edgestoreProvider"
 import { addCoverToNote } from "@/actions/actions"
 import { toast } from "sonner"
 
