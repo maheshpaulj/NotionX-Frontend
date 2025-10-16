@@ -13,40 +13,11 @@ jobs:
     name: Build, Push, and Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Validate Secrets
-      run: |
-        echo "LIVEBLOCKS_PRIVATE_KEY length: ${{ env.LIVEBLOCKS_SECRET_LENGTH }}"
-        echo "EDGE_STORE_ACCESS_KEY length: ${{ env.EDGE_ACCESS_KEY_LENGTH }}"
-        echo "EDGE_STORE_SECRET_KEY length: ${{ env.EDGE_SECRET_KEY_LENGTH }}"
-        echo "AWS_ACCESS_KEY_ID length: ${{ env.AWS_KEY_ID_LENGTH }}"
-        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY_LENGTH }}"
-        echo "FIREBASE_SERVICE_KEY length: ${{ env.FIREBASE_SERVICE_KEY_LENGTH }}"
-
-        echo "LIVEBLOCKS_PRIVATE_KEY length: ${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}"
-        echo "EDGE_STORE_ACCESS_KEY length: ${{ secrets.EDGE_STORE_ACCESS_KEY }}"
-        echo "EDGE_STORE_SECRET_KEY length: ${{ secrets.EDGE_STORE_SECRET_KEY }}"
-        echo "AWS_ACCESS_KEY_ID length: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
-        echo "FIREBASE_SERVICE_KEY length: ${{ secrets.FIREBASE_SERVICE_KEY }}"
-      env:
-        # We create temporary env vars to hold the length of each secret
-        LIVEBLOCKS_SECRET_LENGTH: ${{ join(secrets.LIVEBLOCKS_PRIVATE_KEY, 'x') && 1 }}
-        EDGE_ACCESS_KEY_LENGTH: ${{ join(secrets.EDGE_STORE_ACCESS_KEY, 'x') && 1 }}
-        EDGE_SECRET_KEY_LENGTH: ${{ join(secrets.EDGE_STORE_SECRET_KEY, 'x') && 1 }}
-        AWS_KEY_ID_LENGTH: ${{ join(secrets.AWS_ACCESS_KEY_ID, 'x') && 1 }}
-
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Create .env.local file for build
-      run: |
-        cat <<EOF > .env.local
-        # This file is dynamically created in CI/CD for the build process
-        LIVEBLOCKS_PRIVATE_KEY=${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}
-        EDGE_STORE_ACCESS_KEY=${{ secrets.EDGE_STORE_ACCESS_KEY }}
-        EDGE_STORE_SECRET_KEY=${{ secrets.EDGE_STORE_SECRET_KEY }}
-        EOF
-
+    # We no longer need a 'Create .env file' step.
+    
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -63,13 +34,30 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
+        # --- DEFINE THE SECRETS AS ENVIRONMENT VARIABLES FOR THE DOCKER COMMAND ---
+        LIVEBLOCKS_PRIVATE_KEY: ${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}
+        EDGE_STORE_ACCESS_KEY: ${{ secrets.EDGE_STORE_ACCESS_KEY }}
+        EDGE_STORE_SECRET_KEY: ${{ secrets.EDGE_STORE_SECRET_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
+        FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}"
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # Use Docker BuildKit's --secret flag to mount the secrets
+        # The secret 'id' MUST match the one in the Dockerfile
+        # Note the DOCKER_BUILDKIT=1 to enable this feature
+        DOCKER_BUILDKIT=1 docker build \
+          --secret id=dotenv,env=LIVEBLOCKS_PRIVATE_KEY \
+          --secret id=dotenv,env=EDGE_STORE_ACCESS_KEY \
+          --secret id=dotenv,env=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
+          --secret id=dotenv,env=AWS_ACCESS_KEY_ID \
+          --secret id=dotenv,env=FIREBASE_SERVICE_KEY \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Deploy to Amazon EKS
+      # ... (This step remains the same)
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
         sed -i 's|image: .*|image: ${{ steps.build-image.outputs.image }}|' ks/deployment.yaml
-        kubectl apply -f k8s/
+        kubectl apply -f ks/

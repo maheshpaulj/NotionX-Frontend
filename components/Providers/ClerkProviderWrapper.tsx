@@ -10,7 +10,7 @@ export const ClerkProviderWrapper = ({ children }: { children: ReactNode }) => {
   
   return (
     <ClerkProvider
-      publishableKey={process.env.CLERK_PUBLISHABLE_KEY!}
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       appearance={{
         baseTheme: theme === "dark" ? dark : undefined,
       }}
