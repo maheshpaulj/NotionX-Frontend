@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/react"
 
 import { Toaster } from "sonner";
 import { ModalProvider } from "@/components/Providers/ModalProvider";
-import { EdgeStoreProvider } from "@/lib/edgestore";
+import { EdgeStoreProvider } from "@/lib/edgestoreProvider";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 
 const geistSans = localFont({
