@@ -42,6 +42,13 @@ jobs:
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
         FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}"
       run: |
+        echo "LIVEBLOCKS_PRIVATE_KEY length: ${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}"
+        echo "EDGE_STORE_ACCESS_KEY length: ${{ secrets.EDGE_STORE_ACCESS_KEY }}"
+        echo "EDGE_STORE_SECRET_KEY length: ${{ secrets.EDGE_STORE_SECRET_KEY }}"
+        echo "AWS_ACCESS_KEY_ID length: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
+        echo "FIREBASE_SERVICE_KEY length: ${{ secrets.FIREBASE_SERVICE_KEY }}"
+        
         # Use Docker BuildKit's --secret flag to mount the secrets
         # The secret 'id' MUST match the one in the Dockerfile
         # Note the DOCKER_BUILDKIT=1 to enable this feature
