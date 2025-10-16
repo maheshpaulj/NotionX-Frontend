@@ -1,6 +1,5 @@
 # /notionx-frontend/Dockerfile
-
-# --- ENABLE BUILDKIT SECRET SYNTAX ---
+# Enable modern Dockerfile syntax for secrets
 # syntax=docker/dockerfile:1
 
 # Stage 1: Builder
@@ -9,10 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-# --- THIS IS THE CRITICAL PART ---
-# The RUN command now mounts the secret file provided by the build command.
-# This file is available at /run/secrets/dotenv ONLY during this command.
-# Next.js automatically detects and uses a file named .env
+# Securely mount the .env file for the build command ONLY
 RUN --mount=type=secret,id=dotenv,target=.env npm run build
 
 # Stage 2: Runner (Final Image)
