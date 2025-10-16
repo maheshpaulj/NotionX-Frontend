@@ -1,8 +1,9 @@
 import { initializeApp, getApps, App, getApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { env } from "process";
 
 // Check if Firebase service key is available
-const serviceKeyString = process.env.FIREBASE_SERVICE_KEY;
+const serviceKeyString = env.FIREBASE_SERVICE_KEY;
 
 if (!serviceKeyString) {
   console.warn("FIREBASE_SERVICE_KEY environment variable is not set. Firebase admin features will be disabled.");
