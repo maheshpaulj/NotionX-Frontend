@@ -9,4 +9,4 @@ spec:
     - protocol: TCP
       port: 80 # The port the service will listen on
       targetPort: 3001
-  type: NodePort # We will use an Ingress later, this is for testing
+  type: LoadBalancer # We will use an Ingress later, this is for testing
