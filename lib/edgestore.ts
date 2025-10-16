@@ -1,5 +1,3 @@
-'use server';
-
 import { initEdgeStore } from '@edgestore/server';
 
 const es = initEdgeStore.create();
