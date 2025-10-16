@@ -7,7 +7,7 @@ import debounce from "lodash/debounce";
 import { doc as DocFB, serverTimestamp, getDoc, setDoc } from "firebase/firestore";
 
 import { db } from "@/firebase";
-import { useEdgeStore } from "@/lib/edgestore";
+import { useEdgeStore } from "@/lib/edgestoreProvider";
 import { useRoom, useSelf } from "@liveblocks/react/suspense";
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import { BlockNoteView } from "@blocknote/shadcn";

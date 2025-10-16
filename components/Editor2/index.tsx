@@ -21,7 +21,7 @@ import {
   UnnestBlockButton,
 } from "@blocknote/react";
 import { useTheme } from "next-themes";
-import { useEdgeStore } from "@/lib/edgestore";
+import { useEdgeStore } from "@/lib/edgestoreProvider";
 import debounce from "lodash/debounce";
 import { doc, serverTimestamp, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
