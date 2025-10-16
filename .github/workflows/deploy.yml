@@ -19,8 +19,15 @@ jobs:
         echo "EDGE_STORE_ACCESS_KEY length: ${{ env.EDGE_ACCESS_KEY_LENGTH }}"
         echo "EDGE_STORE_SECRET_KEY length: ${{ env.EDGE_SECRET_KEY_LENGTH }}"
         echo "AWS_ACCESS_KEY_ID length: ${{ env.AWS_KEY_ID_LENGTH }}"
-        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
-        echo "FIREBASE_SERVICE_KEY length: ${{ env.FIREBASE_SERVICE_KEY }}"
+        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY_LENGTH }}"
+        echo "FIREBASE_SERVICE_KEY length: ${{ env.FIREBASE_SERVICE_KEY_LENGTH }}"
+
+        echo "LIVEBLOCKS_PRIVATE_KEY length: ${{ secrets.LIVEBLOCKS_PRIVATE_KEY }}"
+        echo "EDGE_STORE_ACCESS_KEY length: ${{ secrets.EDGE_STORE_ACCESS_KEY }}"
+        echo "EDGE_STORE_SECRET_KEY length: ${{ secrets.EDGE_STORE_SECRET_KEY }}"
+        echo "AWS_ACCESS_KEY_ID length: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY length: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
+        echo "FIREBASE_SERVICE_KEY length: ${{ secrets.FIREBASE_SERVICE_KEY }}"
       env:
         # We create temporary env vars to hold the length of each secret
         LIVEBLOCKS_SECRET_LENGTH: ${{ join(secrets.LIVEBLOCKS_PRIVATE_KEY, 'x') && 1 }}
