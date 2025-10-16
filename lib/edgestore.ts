@@ -1,9 +1,14 @@
-'use client';
- 
-import { type EdgeStoreRouter } from '../app/api/edgestore/[...edgestore]/route';
-import { createEdgeStoreProvider } from '@edgestore/react';
- 
-const { EdgeStoreProvider, useEdgeStore } =
-  createEdgeStoreProvider<EdgeStoreRouter>();
- 
-export { EdgeStoreProvider, useEdgeStore };
+'use server';
+
+import { initEdgeStore } from '@edgestore/server';
+
+const es = initEdgeStore.create();
+
+export const edgeStoreRouter = es.router({
+  publicFiles: es.fileBucket()
+    .beforeDelete(() => {
+      return true; // allow delete
+    }),
+});
+
+export type EdgeStoreRouter = typeof edgeStoreRouter;
