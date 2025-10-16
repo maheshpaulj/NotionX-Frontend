@@ -21,7 +21,7 @@ import {
   UnnestBlockButton,
 } from "@blocknote/react";
 import { useTheme } from "next-themes";
-import { useEdgeStore } from "@/lib/edgestoreProvider";
+import { useFileUpload } from "@/lib/fileUpload";
 import debounce from "lodash/debounce";
 import { doc, serverTimestamp, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
@@ -34,7 +34,7 @@ type SaveStatus = "saved" | "saving" | "idle";
 
 export default function Editor({ noteId }: { noteId: string }) {
   const { resolvedTheme } = useTheme();
-  const { edgestore } = useEdgeStore();
+  const fileUpload = useFileUpload();
   const [blocks, setBlocks] = useState<Block[]>([]); //eslint-disable-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -42,7 +42,7 @@ export default function Editor({ noteId }: { noteId: string }) {
 
   const editor = useCreateBlockNote({
     uploadFile: async (file: File) => {
-      const response = await edgestore.publicFiles.upload({ file });
+      const response = await fileUpload.upload({ file });
       return response.url;
     },
   });

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import {Dialog,DialogContent,DialogHeader} from '@/components/ui/dialog'
 import { useConverImage } from "@/hooks/useCoverImage"
 import { SingleImageDropzone } from "@/components/SingleImageDropzone"
-import { useEdgeStore } from "@/lib/edgestoreProvider"
+import { useFileUpload } from "@/lib/fileUpload"
 import { addCoverToNote } from "@/actions/actions"
 import { toast } from "sonner"
 
@@ -17,7 +17,7 @@ export function CoverImageModal () {
   const [file,setFile] = useState<File>();
   const [isSubmitting,setIsSubmitting] = useState(false);
   const coverImage = useConverImage();
-  const {edgestore} = useEdgeStore();
+  const fileUpload = useFileUpload();
   const [ isPending, startTransition ] = useTransition(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const onClose = () => {
@@ -31,12 +31,7 @@ export function CoverImageModal () {
       setIsSubmitting(true)
       setFile(file)
 
-      const response = await edgestore.publicFiles.upload({
-          file,
-          options:{
-            replaceTargetUrl:coverImage.url
-          }
-        })
+      const response = await fileUpload.upload({ file })
         try {
             startTransition(async() => {
               const {success} = await addCoverToNote(roomId, response.url);

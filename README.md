@@ -23,7 +23,6 @@ AI-powered note-taking application with real-time collaboration capabilities.
   - Context-aware question answering
   - Intelligent summarization
 - **Rich Editor**: BlockNote-powered editor with smooth animations and formatting
-- **Image Support**: Seamless media integration with EdgeStore
 - **Secure Authentication**: User management through Clerk
 - **Edge Computing**: Fast AI processing with Cloudflare Workers
 
@@ -40,7 +39,6 @@ AI-powered note-taking application with real-time collaboration capabilities.
   - Cloudflare Workers (Edge Computing)
   - Meta's Llama Model (AI Processing)
   - Liveblocks (Real-time Collaboration)
-  - EdgeStore (Image Storage)
   - Clerk (Authentication)
   - Firebase (Database)
 
@@ -69,8 +67,7 @@ CLERK_SECRET_KEY=
 
 NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=
 LIVEBLOCKS_PRIVATE_KEY=
-EDGE_STORE_ACCESS_KEY=
-EDGE_STORE_SECRET_KEY=
+# EDGE_STORE_ACCESS_KEY and EDGE_STORE_SECRET_KEY removed (EdgeStore integration disabled)
 
 NEXT_PUBLIC_BASE_URL=
 

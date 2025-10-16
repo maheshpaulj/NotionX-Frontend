@@ -7,7 +7,7 @@ import debounce from "lodash/debounce";
 import { doc as DocFB, serverTimestamp, getDoc, setDoc } from "firebase/firestore";
 
 import { db } from "@/firebase";
-import { useEdgeStore } from "@/lib/edgestoreProvider";
+import { useFileUpload } from "@/lib/fileUpload";
 import { useRoom, useSelf } from "@liveblocks/react/suspense";
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import { BlockNoteView } from "@blocknote/shadcn";
@@ -43,11 +43,11 @@ type BlockNoteProps = {
 function BlockNote({ doc, provider, roomId, initialContent }: BlockNoteProps) {
   const { resolvedTheme } = useTheme();
   const userInfo = useSelf((me) => me.info);
-  const { edgestore } = useEdgeStore();
+  const fileUpload = useFileUpload();
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "idle">("idle");
 
   const handleUpload = async (file: File) => {
-    const response = await edgestore.publicFiles.upload({ file });
+    const response = await fileUpload.upload({ file });
     return response.url;
   };
 

@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/react"
 
 import { Toaster } from "sonner";
 import { ModalProvider } from "@/components/Providers/ModalProvider";
-import { EdgeStoreProvider } from "@/lib/edgestoreProvider";
+
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 
 const geistSans = localFont({
@@ -95,12 +95,10 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="NotionX-theme">
           <ClerkProviderWrapper>
-            <EdgeStoreProvider>
-              <Toaster position="bottom-right" />
-              <ModalProvider />
-              <ServiceWorkerRegistrar />
-              {children}
-            </EdgeStoreProvider>
+            <Toaster position="bottom-right" />
+            <ModalProvider />
+            <ServiceWorkerRegistrar />
+            {children}
           </ClerkProviderWrapper>
         </ThemeProvider>
         <Analytics />

@@ -43,7 +43,7 @@ wrangler.toml
 .cloudflare/
 
 # EdgeStore (if it creates any local cache, adjust as needed)
-.edgestore/
+# EdgeStore (removed from this project)
 
 # Others (optional)
 *.log

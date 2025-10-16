@@ -7,7 +7,7 @@ import { ImageIcon, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useConverImage } from "@/hooks/useCoverImage"
-import { useEdgeStore } from "@/lib/edgestoreProvider"
+import { useFileUpload } from "@/lib/fileUpload"
 import { Skeleton } from "@/components//ui/skeleton"
 import { removeCoverFromNote } from "@/actions/actions"
 import { useTransition } from "react"
@@ -22,7 +22,7 @@ interface CoverProps {
 
 export function Cover ({url, preview, showAvatar}:CoverProps) {
 
-  const {edgestore} = useEdgeStore();
+  const fileUpload = useFileUpload();
   const params = useParams();
   const roomId = params.noteId?.toString();
   const coverIamge = useConverImage();
@@ -30,8 +30,8 @@ export function Cover ({url, preview, showAvatar}:CoverProps) {
 
   const onRemove = async () => {
     if (url) {
-      await edgestore.publicFiles.delete({
-        url:url
+      await fileUpload.delete({
+        url: url
       })
     }
     try {
