@@ -48,16 +48,39 @@ pipeline {
                     sh 'sudo cp /home/ec2-user/.kube/config /var/lib/jenkins/.kube/config'
                     sh 'sudo chown jenkins:jenkins /var/lib/jenkins/.kube/config'
                     sh 'sudo chmod 600 /var/lib/jenkins/.kube/config'
-
-                    // Use the image name passed from the previous stage
-                    sh "sed -i 's|__IMAGE_URL__:__IMAGE_TAG__|${env.IMAGE_NAME_FOR_DEPLOY}|g' k8s/deployment.yaml"
-
+                    
+                    // Create/Update ECR secret
+                    sh '''
+                        kubectl create secret docker-registry ecr-secret \
+                        --docker-server=503698126220.dkr.ecr.us-east-1.amazonaws.com \
+                        --docker-username=AWS \
+                        --docker-password=$(aws ecr get-login-password --region us-east-1) \
+                        --namespace=default \
+                        --dry-run=client -o yaml | kubectl apply -f -
+                    '''
+                    
+                    // Update image tag in deployment
+                    sh "sed -i 's|__IMAGE_URL__:__IMAGE_TAG__|503698126220.dkr.ecr.us-east-1.amazonaws.com/notionx-frontend:build-${BUILD_NUMBER}|g' k8s/deployment.yaml"
+                    
+                    // Apply configurations
                     sh 'kubectl apply -f k8s/service.yaml'
                     sh 'kubectl apply -f k8s/deployment.yaml'
-                    sh 'kubectl rollout status deployment/notionx-frontend-deployment'
+                    
+                    // Wait for rollout with better error handling
+                    sh '''
+                        kubectl rollout status deployment/notionx-frontend-deployment --timeout=5m || \
+                        (echo "Deployment failed. Pod status:" && \
+                        kubectl get pods -l app=notionx-frontend && \
+                        echo "Pod descriptions:" && \
+                        kubectl describe pods -l app=notionx-frontend && \
+                        echo "Pod logs:" && \
+                        kubectl logs -l app=notionx-frontend --tail=100 || true && \
+                        exit 1)
+                    '''
                 }
             }
         }
+    }
     post {
         always {
             cleanWs()
