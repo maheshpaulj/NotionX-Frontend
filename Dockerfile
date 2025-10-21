@@ -31,6 +31,6 @@ COPY --from=builder /app/.next/static ./.next/static
 # Install ONLY production dependencies
 RUN yarn install --production
 
-EXPOSE 3001
+EXPOSE 3000
 # The standalone output provides a server.js file
 CMD ["node", "server.js"]
