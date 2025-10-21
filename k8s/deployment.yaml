@@ -13,6 +13,8 @@ spec:
       labels:
         app: notionx-frontend
     spec:
+      imagePullSecrets:
+        - name: ecr-secret 
       containers:
       - name: notionx-frontend
         image: __IMAGE_URL__:__IMAGE_TAG__ # Jenkins will replace this
