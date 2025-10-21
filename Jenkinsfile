@@ -1,13 +1,11 @@
-// Jenkinsfile (FINAL, SYNTACTICALLY CORRECT VERSION)
+// Jenkinsfile (FINAL, CORRECTED VARIABLE SCOPING)
 pipeline {
     agent any
 
     environment {
-        AWS_REGION     = 'us-east-1' // CRITICAL: Ensure this matches your AWS region!
-        ECR_REPOSITORY = "notionx-frontend" // Name of the ECR repo from Terraform
+        AWS_REGION     = 'us-east-1'
+        ECR_REPOSITORY = "notionx-frontend"
         IMAGE_TAG      = "build-${BUILD_NUMBER}"
-        // Declare IMAGE_NAME here as an empty string. We will populate it in the build stage.
-        IMAGE_NAME     = ""
     }
 
     stages {
@@ -25,17 +23,20 @@ pipeline {
                         def accountId = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
                         def ecrRegistry = "${accountId}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-                        // 2. Populate the environment variable with the full image name
-                        env.IMAGE_NAME = "${ecrRegistry}/${ECR_REPOSITORY}:${IMAGE_TAG}"
-
-                        // 3. Login to ECR
+                        // 2. Construct the full, correct image name
+                        def fullImageName = "${ecrRegistry}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                        
+                        // 3. Login to the correct ECR registry
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ecrRegistry}"
 
-                        // 4. Build the image
-                        sh "docker build -t ${env.IMAGE_NAME} ."
+                        // 4. Build the image and TAG IT with the FULL name
+                        sh "docker build --shm-size=1g -t ${fullImageName} ."
 
-                        // 5. Push the image
-                        sh "docker push ${env.IMAGE_NAME}"
+                        // 5. Push the correctly tagged image
+                        sh "docker push ${fullImageName}"
+
+                        // 6. Pass the full image name to the next stage
+                        env.IMAGE_NAME_FOR_DEPLOY = fullImageName
                     }
                 }
             }
@@ -49,8 +50,8 @@ pipeline {
                     sh 'sudo chown jenkins:jenkins /var/lib/jenkins/.kube/config'
                     sh 'sudo chmod 600 /var/lib/jenkins/.kube/config'
 
-                    // Use the environment variable we populated in the previous stage
-                    sh "sed -i 's|__IMAGE_URL__:__IMAGE_TAG__|${env.IMAGE_NAME}|g' k8s/deployment.yaml"
+                    // Use the image name passed from the previous stage
+                    sh "sed -i 's|__IMAGE_URL__:__IMAGE_TAG__|${env.IMAGE_NAME_FOR_DEPLOY}|g' k8s/deployment.yaml"
 
                     sh 'kubectl apply -f k8s/service.yaml'
                     sh 'kubectl apply -f k8s/deployment.yaml'
@@ -62,6 +63,7 @@ pipeline {
     post {
         always {
             cleanWs()
+            sh "docker system prune -a -f" // Proactively clean up space
         }
     }
 }
