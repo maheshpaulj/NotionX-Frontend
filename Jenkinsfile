@@ -1,4 +1,3 @@
-// Jenkinsfile (FINAL, CORRECTED VARIABLE SCOPING)
 pipeline {
     agent any
 
@@ -43,6 +42,7 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
+            steps {
                 script {
                     sh 'sudo mkdir -p /var/lib/jenkins/.kube'
                     sh 'sudo cp /home/ec2-user/.kube/config /var/lib/jenkins/.kube/config'
@@ -79,7 +79,7 @@ pipeline {
                     '''
                 }
             }
-    }
+        }
     post {
         always {
             cleanWs()
