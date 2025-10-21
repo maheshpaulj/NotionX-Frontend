@@ -49,16 +49,6 @@ pipeline {
                     sh 'sudo chown jenkins:jenkins /var/lib/jenkins/.kube/config'
                     sh 'sudo chmod 600 /var/lib/jenkins/.kube/config'
                     
-                    // Create/Update ECR secret
-                    sh '''
-                        kubectl create secret docker-registry ecr-secret \
-                        --docker-server=503698126220.dkr.ecr.us-east-1.amazonaws.com \
-                        --docker-username=AWS \
-                        --docker-password=$(aws ecr get-login-password --region us-east-1) \
-                        --namespace=default \
-                        --dry-run=client -o yaml | kubectl apply -f -
-                    '''
-                    
                     // Update image tag in deployment
                     sh "sed -i 's|__IMAGE_URL__:__IMAGE_TAG__|503698126220.dkr.ecr.us-east-1.amazonaws.com/notionx-frontend:build-${BUILD_NUMBER}|g' k8s/deployment.yaml"
                     
