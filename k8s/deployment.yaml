@@ -1,11 +1,10 @@
+# k8s/deployment.yaml (FINAL VERSION)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notionx-frontend-deployment
-  labels:
-    app: notionx-frontend
 spec:
-  replicas: 2 # Run two instances for basic high-availability
+  replicas: 1 # Start with 1, can be scaled later
   selector:
     matchLabels:
       app: notionx-frontend
@@ -16,9 +15,11 @@ spec:
     spec:
       containers:
       - name: notionx-frontend
-        image: __IMAGE_URL__:__IMAGE_TAG__ # Jenkins will replace these placeholders
+        image: __IMAGE_URL__:__IMAGE_TAG__ # Jenkins will replace this
         ports:
-        - containerPort: 3000
-        envFrom: # Pulls all key-value pairs from the specified secret
-        - secretRef:
-            name: notionx-secrets # This secret will contain your Firebase credentials
+        - containerPort: 3001 # Your app runs on port 3000 inside the container
+        envFrom:
+          - secretRef:
+              # This tells Kubernetes to find the secret named 'notionx-secrets'
+              # and inject every key-value pair as an environment variable.
+              name: notionx-secrets
