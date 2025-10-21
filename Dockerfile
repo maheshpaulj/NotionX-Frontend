@@ -1,24 +1,71 @@
-# /notionx-frontend/Dockerfile
-# Enable modern Dockerfile syntax for secrets
-# syntax=docker/dockerfile:1
+# Dockerfile in notionx-frontend repository
 
-# Stage 1: Builder
-FROM node:18-alpine AS builder
+# ---- Base Stage ----
+# Use a specific Node.js version
+FROM node:18-alpine AS base
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+# ---- Dependencies Stage ----
+FROM base AS deps
+COPY package.json yarn.lock* ./
+# Use --frozen-lockfile for reproducible builds
+RUN yarn install --frozen-lockfile
+
+# ---- Builder Stage ----
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Securely mount the .env file for the build command ONLY
-RUN --mount=type=secret,id=dotenv,target=.env npm run build
 
-# Stage 2: Runner (Final Image)
-FROM node:18-alpine
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ARG CLERK_SECRET_KEY
+ARG NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY
+ARG LIVEBLOCKS_PRIVATE_KEY
+ARG EDGE_STORE_ACCESS_KEY
+ARG EDGE_STORE_SECRET_KEY
+ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_APP_URL
+ARG FIREBASE_SERVICE_KEY
+ARG FIREBASE_KEY
+ARG NODE_ENV
+ARG GEMINI_API_KEY
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ARG VAPID_PRIVATE_KEY
+ARG VAPID_SUBJECT
+ARG CRON_SECRET
+
+ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ENV CLERK_SECRET_KEY=$CLERK_SECRET_KEY
+ENV NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=$NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY
+ENV LIVEBLOCKS_PRIVATE_KEY=$LIVEBLOCKS_PRIVATE_KEY
+ENV EDGE_STORE_ACCESS_KEY=$EDGE_STORE_ACCESS_KEY
+ENV EDGE_STORE_SECRET_KEY=$EDGE_STORE_SECRET_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV FIREBASE_SERVICE_KEY=$FIREBASE_SERVICE_KEY
+ENV FIREBASE_KEY=$FIREBASE_KEY
+ENV NODE_ENV=$NODE_ENV
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY
+ENV VAPID_SUBJECT=$VAPID_SUBJECT
+ENV CRON_SECRET=$CRON_SECRET
+
+RUN yarn build
+
+# ---- Runner Stage ----
+FROM base AS runner
 WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
 
+ENV NODE_ENV=production
+
+# Copy built assets
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Expose the port Next.js runs on
 EXPOSE 3001
-CMD ["npm", "start"]
+
+# Run the application
+CMD ["node", "server.js"]

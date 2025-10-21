@@ -4,6 +4,7 @@ const nextConfig = {
         // No external edgestore domains configured
         domains: [],
     },
+    output: 'standalone',
 };
 
 export default nextConfig;

@@ -1,23 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: notionx-frontend-deployment
+  labels:
+    app: notionx-frontend
 spec:
-  replicas: 1
+  replicas: 2 # Run two instances for basic high-availability
   selector:
     matchLabels:
-      app: frontend
+      app: notionx-frontend
   template:
     metadata:
       labels:
-        app: frontend
+        app: notionx-frontend
     spec:
       containers:
-      - name: frontend-app
-        image: 503698126220.dkr.ecr.us-east-1.amazonaws.com/notionx-frontend:latest # Placeholder
+      - name: notionx-frontend
+        image: __IMAGE_URL__:__IMAGE_TAG__ # Jenkins will replace these placeholders
         ports:
-        - containerPort: 3001
-        env:
-        - name: AI_API_URL
-          # Kubernetes DNS: service-name.namespace.svc.cluster.local
-          value: "http://ai-api-service.default.svc.cluster.local:8080/api/generate"
+        - containerPort: 3000
+        envFrom: # Pulls all key-value pairs from the specified secret
+        - secretRef:
+            name: firebase-config # This secret will contain your Firebase credentials

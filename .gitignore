@@ -48,3 +48,5 @@ wrangler.toml
 # Others (optional)
 *.log
 coverage/
+
+k8s/secrets.yaml

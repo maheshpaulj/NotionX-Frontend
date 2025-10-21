@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
-  annotations:
-    # This tells the AWS load balancer which path to check for health
-    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /
+  name: notionx-frontend-service
+  labels:
+    app: notionx-frontend
 spec:
+  type: NodePort # Exposes the service on a static port on the EC2 host.
+               # This will be the port you access from your browser.
   selector:
-    app: frontend
+    app: notionx-frontend
   ports:
     - protocol: TCP
-      port: 80 # The port the service will listen on
-      targetPort: 3001
-  type: LoadBalancer # We will use an Ingress later, this is for testing
+      port: 80       # Port the service listens on inside the cluster
+      targetPort: 3001 # Port the container is actually running on (as defined in Dockerfile)
