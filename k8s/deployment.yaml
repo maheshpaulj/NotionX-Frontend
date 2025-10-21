@@ -21,4 +21,4 @@ spec:
         - containerPort: 3000
         envFrom: # Pulls all key-value pairs from the specified secret
         - secretRef:
-            name: firebase-config # This secret will contain your Firebase credentials
+            name: notionx-secrets # This secret will contain your Firebase credentials
