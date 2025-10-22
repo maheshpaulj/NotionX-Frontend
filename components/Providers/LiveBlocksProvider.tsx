@@ -10,7 +10,7 @@ function LiveBlocksProvider({children}:{children: React.ReactNode}) {
     }
 
   return (
-    <LiveblocksProvider authEndpoint={"/api/auth-endpoint"} throttle={16}>
+    <LiveblocksProvider authEndpoint={"/api/auth-endpoint"} throttle={16} publicApiKey={env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY}>
         {children}
     </LiveblocksProvider>
   )
